@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.2" last-position="0,161" last-zoom="1" max-obj-count="4"
+	 default-schema="public" default-owner="postgres">
+<database name="parts_db" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" layer="0" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="parts" layer="0" collapse-mode="2" max-obj-count="4">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="140" y="520"/>
+	<column name="part_id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="part_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="part_number" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="current_price" not-null="true">
+		<type name="float" length="0"/>
+	</column>
+	<constraint name="Parts_pk" type="pk-constr" table="public.parts">
+		<columns names="part_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="check_price" type="ck-constr" table="public.parts">
+			<expression><![CDATA[current_price>0.0]]></expression>
+	</constraint>
+</table>
+
+<table name="suppliers" layer="0" collapse-mode="2" max-obj-count="4">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="140" y="340"/>
+	<column name="supplier_id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="address">
+		<type name="text" length="0"/>
+	</column>
+	<column name="phone" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="Suppliers_pk" type="pk-constr" table="public.suppliers">
+		<columns names="supplier_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="price_history" layer="0" collapse-mode="2" max-obj-count="4">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="620" y="500"/>
+	<column name="price_id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="price" not-null="true">
+		<type name="float" length="0"/>
+	</column>
+	<column name="effective_date" not-null="true">
+		<type name="date" length="0"/>
+		<comment><![CDATA[Дата вступления цены в силу]]></comment>
+	</column>
+	<constraint name="PriceHistory_pk" type="pk-constr" table="public.price_history">
+		<columns names="price_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="check_price" type="ck-constr" table="public.price_history">
+			<expression><![CDATA[price>0
+]]></expression>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="part_id" index="3"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="parts_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="purchases" layer="0" collapse-mode="2" max-obj-count="6">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="580" y="260"/>
+	<column name="purchase_id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="purchase_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="quantity" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="Purchases_pk" type="pk-constr" table="public.purchases">
+		<columns names="purchase_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="quantity_check" type="ck-constr" table="public.purchases">
+			<expression><![CDATA[quantity>0
+]]></expression>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="part_id" index="4"/>
+		<object name="supplier_id" index="3"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="parts_fk" index="1"/>
+		<object name="suppliers_fk" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="Suppliers_has_many_Purchases" type="rel1n" layer="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#021412"
+	 src-table="public.suppliers"
+	 dst-table="public.purchases"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="Parts_has_many_Purchases" type="rel1n" layer="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#17c8f4"
+	 src-table="public.parts"
+	 dst-table="public.purchases"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="parts_has_many_price_history" type="rel1n" layer="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#dfa234"
+	 src-table="public.parts"
+	 dst-table="public.price_history"
+	 src-required="true" dst-required="false"/>
+
+</dbmodel>
